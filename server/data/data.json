@@ -1,0 +1,368 @@
+{
+  "settings": {
+    "targetAverage": 9.09,
+    "schoolYear": "2025/2026",
+    "class": "4IC",
+    "year": 4
+  },
+  "subjects": [
+    {
+      "id": "sub_1778866521759_c9q6d",
+      "name": "Matematica",
+      "color": "#ce0303",
+      "targetAverage": 7.75,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866606284_af7ln",
+      "name": "Inglese",
+      "color": "#6315c1",
+      "targetAverage": 8.6,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866661188_dvt9r",
+      "name": "Scienze motorie e sportive",
+      "color": "#147a00",
+      "targetAverage": 9.6,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866711831_u4k8t",
+      "name": "Sistemi e reti",
+      "color": "#8feb1e",
+      "targetAverage": 7.6,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866754366_v0ibb",
+      "name": "Storia",
+      "color": "#384acc",
+      "targetAverage": 8.8,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866783148_idn2g",
+      "name": "Telecomunicazioni",
+      "color": "#d959cf",
+      "targetAverage": 9.6,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866808607_wv9xr",
+      "name": "TPSIT",
+      "color": "#009980",
+      "targetAverage": 8.65,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778866947716_1d2u7",
+      "name": "Informatica",
+      "color": "#fd8a08",
+      "targetAverage": 7.7,
+      "weight": 1,
+      "hasOral": true,
+      "hasWritten": true
+    },
+    {
+      "id": "sub_1778875290170_x4zhi",
+      "name": "Italiano",
+      "color": "#d1d1d1",
+      "targetAverage": 8.8,
+      "weight": 1
+    },
+    {
+      "id": "sub_1779010967932_ie6x0",
+      "name": "Educazione civica",
+      "color": "#000000",
+      "targetAverage": 8.7,
+      "weight": 1
+    }
+  ],
+  "grades": [
+    {
+      "id": "g_1779023201700_1wotf",
+      "subjectId": "sub_1778866606284_af7ln",
+      "value": 8.8,
+      "type": "scritto",
+      "date": "2026-02-04",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:06:41.701Z"
+    },
+    {
+      "id": "g_1779023214993_04xob",
+      "subjectId": "sub_1778866521759_c9q6d",
+      "value": 7.75,
+      "type": "scritto",
+      "date": "2026-02-10",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:06:54.994Z"
+    },
+    {
+      "id": "g_1779023239053_us9bc",
+      "subjectId": "sub_1778866661188_dvt9r",
+      "value": 9.5,
+      "type": "pratico",
+      "date": "2026-02-11",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:07:19.053Z"
+    },
+    {
+      "id": "g_1779023258348_ntjqs",
+      "subjectId": "sub_1778875290170_x4zhi",
+      "value": 8.5,
+      "type": "scritto",
+      "date": "2026-02-23",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:07:38.348Z"
+    },
+    {
+      "id": "g_1779023280980_wn08g",
+      "subjectId": "sub_1778866783148_idn2g",
+      "value": 10,
+      "type": "pratico",
+      "date": "2026-02-23",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:08:00.980Z"
+    },
+    {
+      "id": "g_1779023303603_znp4y",
+      "subjectId": "sub_1778866808607_wv9xr",
+      "value": 9.75,
+      "type": "scritto",
+      "date": "2026-02-24",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:08:23.603Z"
+    },
+    {
+      "id": "g_1779023335061_y4u7e",
+      "subjectId": "sub_1778866947716_1d2u7",
+      "value": 7,
+      "type": "scritto",
+      "date": "2026-02-26",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:08:55.061Z"
+    },
+    {
+      "id": "g_1779023363955_39p09",
+      "subjectId": "sub_1778866711831_u4k8t",
+      "value": 6.5,
+      "type": "pratico",
+      "date": "2026-03-02",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:09:23.955Z"
+    },
+    {
+      "id": "g_1779023381313_9b57m",
+      "subjectId": "sub_1778866606284_af7ln",
+      "value": 8,
+      "type": "orale",
+      "date": "2026-03-06",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:09:41.313Z"
+    },
+    {
+      "id": "g_1779023400873_4x4q7",
+      "subjectId": "sub_1778866521759_c9q6d",
+      "value": 8.5,
+      "type": "orale",
+      "date": "2026-03-06",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:10:00.873Z"
+    },
+    {
+      "id": "g_1779023419581_ddy5b",
+      "subjectId": "sub_1778866783148_idn2g",
+      "value": 10,
+      "type": "orale",
+      "date": "2026-03-06",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:10:19.581Z"
+    },
+    {
+      "id": "g_1779023487842_18tal",
+      "subjectId": "sub_1778866754366_v0ibb",
+      "value": 8.5,
+      "type": "orale",
+      "date": "2026-03-11",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:11:27.842Z"
+    },
+    {
+      "id": "g_1779023722640_8feqs",
+      "subjectId": "sub_1778866606284_af7ln",
+      "value": 8.5,
+      "type": "scritto",
+      "date": "2026-03-25",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:15:22.640Z"
+    },
+    {
+      "id": "g_1779023747276_4q53p",
+      "subjectId": "sub_1778866711831_u4k8t",
+      "value": 8.5,
+      "type": "orale",
+      "date": "2026-03-26",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:15:47.276Z"
+    },
+    {
+      "id": "g_1779023780979_g3a5f",
+      "subjectId": "sub_1778866521759_c9q6d",
+      "value": 7.5,
+      "type": "scritto",
+      "date": "2026-03-31",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:16:20.979Z"
+    },
+    {
+      "id": "g_1779023804832_xqyma",
+      "subjectId": "sub_1778866521759_c9q6d",
+      "value": 7.5,
+      "type": "scritto",
+      "date": "2026-03-31",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:16:44.832Z"
+    },
+    {
+      "id": "g_1779023835290_77zac",
+      "subjectId": "sub_1778866606284_af7ln",
+      "value": 8,
+      "type": "orale",
+      "date": "2026-04-08",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:17:15.290Z"
+    },
+    {
+      "id": "g_1779023854702_rnm6q",
+      "subjectId": "sub_1778866521759_c9q6d",
+      "value": 8,
+      "type": "orale",
+      "date": "2026-04-09",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:17:34.702Z"
+    },
+    {
+      "id": "g_1779023870633_q5pck",
+      "subjectId": "sub_1778866947716_1d2u7",
+      "value": 8,
+      "type": "pratico",
+      "date": "2026-04-10",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:17:50.633Z"
+    },
+    {
+      "id": "g_1779023889862_x0y68",
+      "subjectId": "sub_1778866808607_wv9xr",
+      "value": 7.5,
+      "type": "scritto",
+      "date": "2026-04-28",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:18:09.862Z"
+    },
+    {
+      "id": "g_1779023916448_obv52",
+      "subjectId": "sub_1778866661188_dvt9r",
+      "value": 10,
+      "type": "scritto",
+      "date": "2026-04-29",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:18:36.448Z"
+    },
+    {
+      "id": "g_1779023931935_96mgh",
+      "subjectId": "sub_1779010967932_ie6x0",
+      "value": 9.5,
+      "type": "scritto",
+      "date": "2026-04-30",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:18:51.935Z"
+    },
+    {
+      "id": "g_1779023948640_tuw21",
+      "subjectId": "sub_1778866808607_wv9xr",
+      "value": 8,
+      "type": "orale",
+      "date": "2026-05-05",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:19:08.640Z"
+    },
+    {
+      "id": "g_1779023966966_4rbmd",
+      "subjectId": "sub_1778866808607_wv9xr",
+      "value": 8.5,
+      "type": "pratico",
+      "date": "2026-05-05",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:19:26.966Z"
+    },
+    {
+      "id": "g_1779023994803_i523v",
+      "subjectId": "sub_1778866606284_af7ln",
+      "value": 8.5,
+      "type": "scritto",
+      "date": "2026-05-08",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:19:54.803Z"
+    },
+    {
+      "id": "g_1779024017109_cw38r",
+      "subjectId": "sub_1778866661188_dvt9r",
+      "value": 10,
+      "type": "scritto",
+      "date": "2026-05-13",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:20:17.110Z"
+    },
+    {
+      "id": "g_1779024041449_khco2",
+      "subjectId": "sub_1778875290170_x4zhi",
+      "value": 9,
+      "type": "orale",
+      "date": "2026-05-13",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-17T13:20:41.449Z"
+    }
+  ]
+}
