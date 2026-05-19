@@ -8,7 +8,7 @@
                         <div class="level-item">
                             <div>
                                 <h1 class="title">
-                                    <span class="icon mr-2"><i class="fas fa-graduation-cap"></i></span>
+                                    <span class="icon mr-2 ml-2"><i class="fas fa-graduation-cap"></i></span>
                                     Ciao!
                                 </h1>
                                 <p class="subtitle is-6 has-text-grey">
@@ -74,6 +74,14 @@
         <AddGradeModal v-if="showAddGrade" @close="showAddGrade = false" @saved="showAddGrade = false" />
     </div>
 </template>
+
+<style scoped>
+@media screen and (min-width: 769px) {
+    .title {
+        text-align: left;
+    }
+}
+</style>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";

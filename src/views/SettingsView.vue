@@ -2,11 +2,11 @@
     <div>
         <AppNavbar />
         <section class="section">
-            <div class="container" style="max-width: 700px">
-                <h1 class="title">
+            <div class="container is-narrow">
+                <h2 class="title">
                     <span class="icon mr-2"><i class="fas fa-gear"></i></span>
                     Impostazioni
-                </h1>
+                </h2>
 
                 <!-- Impostazioni generali -->
                 <div class="box mb-5">

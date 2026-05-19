@@ -363,6 +363,16 @@
       "period": "Q2",
       "note": "",
       "createdAt": "2026-05-17T13:20:41.449Z"
+    },
+    {
+      "id": "g_1779100591383_cdh9p",
+      "subjectId": "sub_1778866783148_idn2g",
+      "value": 9,
+      "type": "scritto",
+      "date": "2026-05-18",
+      "period": "Q2",
+      "note": "",
+      "createdAt": "2026-05-18T10:36:31.383Z"
     }
   ]
 }

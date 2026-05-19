@@ -1,82 +1,88 @@
 <template>
-    <div class="page">
+    <div>
         <AppNavbar />
-        <main class="content">
-            <h1 class="title2">
-                <span class="icon mr-1"><i class="fas fa-chart-simple"></i></span> Statistiche
-            </h1>
+        <section class="section">
+            <div class="container">
+                <h2 class="title">
+                    <span class="icon mr-1"><i class="fas fa-chart-simple"></i></span> Statistiche
+                </h2>
 
-            <div v-if="!stats" class="empty">
-                Nessun voto ancora. Inizia ad inserire i tuoi voti!
-            </div>
-
-            <template v-else>
-                <div class="stat-cards">
-                    <div class="stat-card total">
-                        <span class="stat-icon"><i class="fa-solid fa-paperclip" style="color: #1a1a2e;"></i></span>
-                        <span class="stat-value">{{ stats.total }}</span>
-                        <span class="stat-label">Voti totali</span>
-                    </div>
-                    <div class="stat-card good">
-                        <span class="stat-icon"><i class="fa-solid fa-check" style="color: #43a047;"></i></span>
-                        <span class="stat-value">{{ stats.sufficient }}</span>
-                        <span class="stat-label">Sufficienze</span>
-                    </div>
-                    <div class="stat-card bad">
-                        <span class="stat-icon"><i class="fa-solid fa-xmark" style="color: #e53935;"></i></span>
-                        <span class="stat-value">{{ stats.insufficient }}</span>
-                        <span class="stat-label">Insufficienze</span>
-                    </div>
-                    <div class="stat-card max">
-                        <span class="stat-icon"><i class="fa-solid fa-award" style="color: #d8bc58;"></i></span>
-                        <span class="stat-value">{{ stats.max }}</span>
-                        <span class="stat-label">Voto massimo</span>
-                    </div>
-                    <div class="stat-card min">
-                        <span class="stat-icon"><i class="fa-solid fa-arrow-trend-down" style="color: #ff6a00;"></i></span>
-                        <span class="stat-value">{{ stats.min }}</span>
-                        <span class="stat-label">Voto minimo</span>
-                    </div>
-                    <div class="stat-card percent-suff">
-                        <span class="stat-icon"><i class="fa-solid fa-chart-line" style="color: #2697f4;"></i></span>
-                        <span class="stat-value">{{ stats.percentSufficient }}%</span>
-                        <span class="stat-label">% sufficienze</span>
-                    </div>
+                <div v-if="!stats" class="empty">
+                    Nessun voto ancora. Inizia ad inserire i tuoi voti!
                 </div>
 
-                <!-- Distribuzione voti -->
-                <div class="chart-card">
-                    <h2>Distribuzione voti</h2>
-                    <div class="bar-chart">
-                        <div v-for="i in 10" :key="i" class="bar-col">
-                            <div class="bar-wrap">
-                                <div class="bar" :class="i >= 6 ? 'bar-good' : 'bar-bad'"
-                                    :style="{ height: barHeight(i) }">
-                                    <span v-if="stats.distribution[i] > 0" class="bar-count">
-                                        {{ stats.distribution[i] }}
-                                    </span>
+                <template v-else>
+                    <div class="stat-cards">
+                        <div class="stat-card total">
+                            <span class="stat-icon"><i class="fa-solid fa-paperclip" style="color: #1a1a2e;"></i></span>
+                            <span class="stat-value">{{ stats.total }}</span>
+                            <span class="stat-label">Voti totali</span>
+                        </div>
+                        <div class="stat-card good">
+                            <span class="stat-icon"><i class="fa-solid fa-check" style="color: #43a047;"></i></span>
+                            <span class="stat-value">{{ stats.sufficient }}</span>
+                            <span class="stat-label">Sufficienze</span>
+                        </div>
+                        <div class="stat-card bad">
+                            <span class="stat-icon"><i class="fa-solid fa-xmark" style="color: #e53935;"></i></span>
+                            <span class="stat-value">{{ stats.insufficient }}</span>
+                            <span class="stat-label">Insufficienze</span>
+                        </div>
+                        <div class="stat-card max">
+                            <span class="stat-icon"><i class="fa-solid fa-award" style="color: #d8bc58;"></i></span>
+                            <span class="stat-value">{{ stats.max }}</span>
+                            <span class="stat-label">Voto massimo</span>
+                        </div>
+                        <div class="stat-card min">
+                            <span class="stat-icon"><i class="fa-solid fa-arrow-trend-down"
+                                    style="color: #ff6a00;"></i></span>
+                            <span class="stat-value">{{ stats.min }}</span>
+                            <span class="stat-label">Voto minimo</span>
+                        </div>
+                        <div class="stat-card percent-suff">
+                            <span class="stat-icon"><i class="fa-solid fa-chart-line"
+                                    style="color: #2697f4;"></i></span>
+                            <span class="stat-value">{{ stats.percentSufficient }}%</span>
+                            <span class="stat-label">% sufficienze</span>
+                        </div>
+                    </div>
+
+                    <!-- Distribuzione voti -->
+                    <div class="chart-card">
+                        <h2>Distribuzione voti</h2>
+                        <div class="bar-chart">
+                            <div v-for="i in 10" :key="i" class="bar-col">
+                                <div class="bar-wrap">
+                                    <div class="bar" :class="i >= 6 ? 'bar-good' : 'bar-bad'"
+                                        :style="{ height: barHeight(i) }">
+                                        <span v-if="stats.distribution[i] > 0" class="bar-count">
+                                            {{ stats.distribution[i] }}
+                                        </span>
+                                    </div>
                                 </div>
+                                <span class="bar-label">{{ i }}</span>
                             </div>
-                            <span class="bar-label">{{ i }}</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Media per materia -->
-                <div class="chart-card">
-                    <h2>Media per materia</h2>
-                    <div class="subject-bars">
-                        <div v-for="sub in averagePerSubject" :key="sub.id" class="subject-bar-row">
-                            <span class="sub-name">{{ sub.name }}</span>
-                            <div class="sub-bar-wrap">
-                                <div class="sub-bar" :style="{ width: sub.average ? (sub.average / 10) * 100 + '%' : '0%', background: sub.color || '#1976D2',}"></div>
+                    <!-- Media per materia -->
+                    <div class="chart-card">
+                        <h2>Media per materia</h2>
+                        <div class="subject-bars">
+                            <div v-for="sub in averagePerSubject" :key="sub.id" class="subject-bar-row">
+                                <span class="sub-name">{{ sub.name }}</span>
+                                <div class="sub-bar-wrap">
+                                    <div class="sub-bar"
+                                        :style="{ width: sub.average ? (sub.average / 10) * 100 + '%' : '0%', background: sub.color || '#1976D2', }">
+                                    </div>
+                                </div>
+                                <span class="subject-average">{{ sub.average ?? "-" }}</span>
                             </div>
-                            <span class="subject-average">{{ sub.average ?? "-" }}</span>
                         </div>
                     </div>
-                </div>
-            </template>
-        </main>
+                </template>
+            </div>
+        </section>
     </div>
 </template>
 

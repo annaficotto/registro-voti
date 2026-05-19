@@ -4,10 +4,10 @@
         <section class="section">
             <div class="container">
 
-                <h1 class="title">
+                <h2 class="title">
                     <span class="icon mr-2"><i class="fas fa-arrow-trend-up"></i></span>
                     Proiezione pagella
-                </h1>
+                </h2>
                 <p class="subtitle is-6 has-text-grey mb-5 mt-4">
                     Ipotizza i voti finali e calcola la tua media pagella e i crediti
                 </p>
@@ -341,10 +341,3 @@ function resetProjections() {
     comportamento.value = null
 }
 </script>
-
-
-<style scoped>
-.subtitle {
-    text-align: center;
-}
-</style>

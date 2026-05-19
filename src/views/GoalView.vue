@@ -1,50 +1,56 @@
 <template>
-    <div class="page">
+    <div>
         <AppNavbar />
-        <main class="content">
-            <h1 class="title2">
-                <span class="icon mr-1"><i class="fas fa-bullseye"></i></span> Calcolatore
-                obiettivo
-            </h1>
-            <p class="subtitle">
-                Scopri quanti voti ti servono per raggiungere la tua media obiettivo
-            </p>
+        <section class="section">
+            <div class="container">
+                <h2 class="title">
+                    <span class="icon mr-1"><i class="fas fa-bullseye"></i></span> Calcolatore
+                    obiettivo
+                </h2>
+                <p class="subtitle">
+                    Scopri quanti voti ti servono per raggiungere la tua media obiettivo
+                </p>
 
-            <div class="target-card">
-                <label>La tua media obiettivo</label>
-                <div class="target-input">
-                    <button @click="changeTarget(-0.09)">−</button>
-                    <span class="target-value">{{ store.settings.targetAverage }}</span>
-                    <button @click="changeTarget(+0.09)">+</button>
-                </div>
-            </div>
-
-            <div class="subjects-list">
-                <div v-for="sub in averagePerSubject" :key="sub.id" class="subject-goal"
-                    :style="{ borderLeftColor: sub.color || '#1976D2' }">
-                    <div class="sub-info">
-                        <h3 class="subject-name">{{ sub.name }}</h3>
-                    </div>
-
-                    <div class="goal-result" :class="resultClass(sub.id)">
-                        <div class="current-avg"><p>Media attuale: <span class="subject-average">{{ sub.average ?? "-" }}</span></p></div>
-                        <template v-if="sub.average === null">
-                            <span class="no-grades">Nessun voto</span>
-                        </template>
-                        <template v-else-if="calcNeededGrade(sub.id).alreadyReached">
-                            <span class="reached"><i class="fa-solid fa-check fa-bounce mr-1" style="color: rgb(67, 160, 71);"></i> Obiettivo raggiunto!</span>
-                        </template>
-                        <template v-else-if="!calcNeededGrade(sub.id).feasible">
-                            <span class="hard"><i class="fa-solid fa-triangle-exclamation mr-1" style="color: rgb(229, 57, 53);"></i> Serve più di 10</span>
-                        </template>
-                        <template v-else>
-                            <span class="needed-label">Voto minimo necessario:</span>
-                            <span class="needed-value">{{ calcNeededGrade(sub.id).needed }}</span>
-                        </template>
+                <div class="target-card">
+                    <label>La tua media obiettivo</label>
+                    <div class="target-input">
+                        <button @click="changeTarget(-0.09)">−</button>
+                        <span class="target-value">{{ store.settings.targetAverage }}</span>
+                        <button @click="changeTarget(+0.09)">+</button>
                     </div>
                 </div>
+
+                <div class="subjects-list">
+                    <div v-for="sub in averagePerSubject" :key="sub.id" class="subject-goal"
+                        :style="{ borderLeftColor: sub.color || '#1976D2' }">
+                        <div class="sub-info">
+                            <h3 class="subject-name">{{ sub.name }}</h3>
+                        </div>
+
+                        <div class="goal-result" :class="resultClass(sub.id)">
+                            <div class="current-avg">
+                                <p>Media attuale: <span class="subject-average">{{ sub.average ?? "-" }}</span></p>
+                            </div>
+                            <template v-if="sub.average === null">
+                                <span class="no-grades">Nessun voto</span>
+                            </template>
+                            <template v-else-if="calcNeededGrade(sub.id).alreadyReached">
+                                <span class="reached"><i class="fa-solid fa-check fa-bounce mr-1"
+                                        style="color: rgb(67, 160, 71);"></i> Obiettivo raggiunto!</span>
+                            </template>
+                            <template v-else-if="!calcNeededGrade(sub.id).feasible">
+                                <span class="hard"><i class="fa-solid fa-triangle-exclamation mr-1"
+                                        style="color: rgb(229, 57, 53);"></i> Serve più di 10</span>
+                            </template>
+                            <template v-else>
+                                <span class="needed-label">Voto minimo necessario:</span>
+                                <span class="needed-value">{{ calcNeededGrade(sub.id).needed }}</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+        </section>
     </div>
 </template>
 
