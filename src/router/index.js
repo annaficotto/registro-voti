@@ -35,6 +35,11 @@ const routes = [
         name: 'Projection',
         component: () => import('@/views/ProjectionView.vue')
     },
+    {
+        path: '/import',
+        name: 'Import',
+        component: () => import('@/views/ImportView.vue')
+    },
 ]
 
 const router = createRouter({

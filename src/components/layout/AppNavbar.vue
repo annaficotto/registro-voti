@@ -15,6 +15,9 @@
                 <router-link to="/dashboard" class="navbar-item" @click="menuOpen = false">
                     <span class="icon mr-1"><i class="fas fa-house"></i></span> Dashboard
                 </router-link>
+                <router-link to="/import" class="navbar-item" @click="menuOpen = false">
+                    <span class="icon mr-1"><i class="fas fa-wand-magic-sparkles"></i></span> Importa
+                </router-link>
                 <router-link to="/stats" class="navbar-item" @click="menuOpen = false">
                     <span class="icon mr-1"><i class="fas fa-chart-simple"></i></span> Statistiche
                 </router-link>
@@ -27,6 +30,17 @@
                 <router-link to="/settings" class="navbar-item" @click="menuOpen = false">
                     <span class="icon mr-1"><i class="fas fa-gear"></i></span> Impostazioni
                 </router-link>
+
+                <div class="navbar-item">
+                    <div class="buttons has-addons">
+                        <button class="button is-small" :class="ui.selectedPeriod === 'all' ? 'is-primary' : 'is-light'"
+                            @click="ui.setPeriod('all')">Tutto</button>
+                        <button class="button is-small" :class="ui.selectedPeriod === 'Q1' ? 'is-primary' : 'is-light'"
+                            @click="ui.setPeriod('Q1')">Q1</button>
+                        <button class="button is-small" :class="ui.selectedPeriod === 'Q2' ? 'is-primary' : 'is-light'"
+                            @click="ui.setPeriod('Q2')">Q2</button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -35,6 +49,12 @@
 <script setup>
 import { ref } from "vue";
 const menuOpen = ref(false);
+
+import { useGradesStore } from '@/stores/grades';
+const store = useGradesStore();
+
+import { useUiStore } from '@/stores/ui';
+const ui = useUiStore();
 </script>
 
 <style scoped>
