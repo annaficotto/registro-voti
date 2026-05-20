@@ -87,22 +87,25 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useGradesStore } from "@/stores/grades";
-import { useGradeCalc } from "@/composables/useGradeCalc";
-import AppNavbar from "@/components/layout/AppNavbar.vue";
+import { computed } from 'vue'
+import { useGradesStore } from '@/stores/grades'
+import { useUiStore } from '@/stores/ui'
+import { useGradeCalc } from '@/composables/useGradeCalc'
+import AppNavbar from '@/components/layout/AppNavbar.vue'
 
-const store = useGradesStore();
-const { stats, averagePerSubject } = useGradeCalc(store);
+const store = useGradesStore()
+const ui = useUiStore()
+
+const { stats, averagePerSubject } = useGradeCalc(store, null, null, computed(() => ui.selectedPeriod))
 
 const maxCount = computed(() => {
-    if (!stats.value) return 1;
-    return Math.max(...Object.values(stats.value.distribution), 1);
-});
+    if (!stats.value) return 1
+    return Math.max(...Object.values(stats.value.distribution), 1)
+})
 
 function barHeight(i) {
-    if (!stats.value) return "0%";
-    return (stats.value.distribution[i] / maxCount.value) * 100 + "%";
+    if (!stats.value) return '0%'
+    return (stats.value.distribution[i] / maxCount.value * 100) + '%'
 }
 </script>
 

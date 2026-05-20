@@ -195,7 +195,7 @@ import { useGradeCalc } from '@/composables/useGradeCalc'
 import AppNavbar from '@/components/layout/AppNavbar.vue'
 
 const store = useGradesStore()
-const { averagePerSubject, calcNeededGrade } = useGradeCalc(store)
+const { averagePerSubject, calcNeededGrade } = useGradeCalc(store, null, null, 'all');
 
 // Voti ipotetici: { subjectId: value }
 const projections = ref({})

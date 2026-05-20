@@ -55,12 +55,16 @@
 </template>
 
 <script setup>
-import { useGradesStore } from "@/stores/grades";
-import { useGradeCalc } from "@/composables/useGradeCalc";
-import AppNavbar from "@/components/layout/AppNavbar.vue";
+import { computed } from 'vue'
+import { useGradesStore } from '@/stores/grades'
+import { useUiStore } from '@/stores/ui'
+import { useGradeCalc } from '@/composables/useGradeCalc'
+import AppNavbar from '@/components/layout/AppNavbar.vue'
 
-const store = useGradesStore();
-const { averagePerSubject, calcNeededGrade } = useGradeCalc(store);
+const store = useGradesStore()
+const ui = useUiStore()
+
+const { averagePerSubject, calcNeededGrade } = useGradeCalc(store, null, null, computed(() => ui.selectedPeriod))
 
 async function changeTarget(delta) {
     const raw = (store.settings.targetAverage * 10 + delta * 10) / 10
@@ -69,10 +73,10 @@ async function changeTarget(delta) {
 }
 
 function resultClass(subjectId) {
-    const r = calcNeededGrade(subjectId);
-    if (r.alreadyReached) return "reached";
-    if (!r.feasible) return "hard";
-    return "normal";
+    const r = calcNeededGrade(subjectId)
+    if (r.alreadyReached) return 'reached'
+    if (!r.feasible) return 'hard'
+    return 'normal'
 }
 </script>
 

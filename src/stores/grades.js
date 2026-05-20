@@ -15,6 +15,7 @@ export const useGradesStore = defineStore('grades', () => {
         year: 4
     })
     const loading = ref(false)
+    const activePeriod = ref('all') // 'all' | 'Q1' | 'Q2'
 
     async function loadData() {
         loading.value = true
@@ -69,7 +70,7 @@ export const useGradesStore = defineStore('grades', () => {
     }
 
     return {
-        subjects, grades, settings, loading,
+        subjects, grades, settings, loading, activePeriod,
         loadData, addGrade, updateGrade, deleteGrade,
         addSubject, updateSubject, deleteSubject, saveSettings
     }

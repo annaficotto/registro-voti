@@ -18,6 +18,21 @@
                     </ul>
                 </nav>
 
+                <div class="field has-addons mb-4">
+                    <div class="control">
+                        <button class="button is-small" :class="localPeriod === 'all' ? 'is-primary' : 'is-light'"
+                            @click="localPeriod = 'all'">Tutto l'anno</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-small" :class="localPeriod === 'Q1' ? 'is-primary' : 'is-light'"
+                            @click="localPeriod = 'Q1'">1° Quadrimestre</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-small" :class="localPeriod === 'Q2' ? 'is-primary' : 'is-light'"
+                            @click="localPeriod = 'Q2'">2° Quadrimestre</button>
+                    </div>
+                </div>
+
                 <div v-if="!subject" class="notification is-warning">
                     <span class="icon"><i class="fas fa-triangle-exclamation"></i></span>
                     Materia non trovata.
@@ -30,10 +45,10 @@
                             <div class="level-left">
                                 <div class="level-item">
                                     <div>
-                                        <p class="title mb-1">
+                                        <h2 class="title mb-1">
                                             <span class="icon mr-2"><i class="fas fa-book"></i></span>
                                             {{ subject.name }}
-                                        </p>
+                                        </h2>
                                         <p class="subtitle is-6 has-text-grey mt-3 mb-1">
                                             {{ subjectData?.count || 0 }} voti inseriti
                                         </p>
@@ -65,21 +80,21 @@
                                 <p class="is-size-7 has-text-grey mb-1">
                                     <span class="icon is-small"><i class="fas fa-pen-clip"></i></span> Scritto
                                 </p>
-                                <p class="title is-4">{{ subjectData?.averageScritto ?? '—' }}</p>
+                                <p class="title is-4 has-text-grey">{{ subjectData?.averageScritto ?? '—' }}</p>
                                 <p class="is-size-7 has-text-grey">{{ countByType('scritto') }} voti</p>
                             </div>
                             <div class="column has-text-centered">
                                 <p class="is-size-7 has-text-grey mb-1">
                                     <span class="icon is-small"><i class="fas fa-comments"></i></span> Orale
                                 </p>
-                                <p class="title is-4">{{ subjectData?.averageOrale ?? '—' }}</p>
+                                <p class="title is-4 has-text-grey">{{ subjectData?.averageOrale ?? '—' }}</p>
                                 <p class="is-size-7 has-text-grey">{{ countByType('orale') }} voti</p>
                             </div>
                             <div class="column has-text-centered">
                                 <p class="is-size-7 has-text-grey mb-1">
                                     <span class="icon is-small"><i class="fas fa-screwdriver-wrench"></i></span> Pratico
                                 </p>
-                                <p class="title is-4">{{ subjectData?.averagePratico ?? '—' }}</p>
+                                <p class="title is-4 has-text-grey">{{ subjectData?.averagePratico ?? '—' }}</p>
                                 <p class="is-size-7 has-text-grey">{{ countByType('pratico') }} voti</p>
                             </div>
                         </div>
@@ -105,16 +120,19 @@
                                         </p>
                                     </div>
                                     <div class="column has-text-centered">
-                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i class="fas fa-pen-clip"></i></span> Scritto</p>
-                                        <p class="title is-5">{{ subjectData?.q1.scritto ?? '—' }}</p>
+                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i
+                                                    class="fas fa-pen-clip"></i></span> Scritto</p>
+                                        <p class="title is-5 has-text-grey">{{ subjectData?.q1.scritto ?? '—' }}</p>
                                     </div>
                                     <div class="column has-text-centered">
-                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i class="fas fa-comments"></i></span> Orale</p>
-                                        <p class="title is-5">{{ subjectData?.q1.orale ?? '—' }}</p>
+                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i
+                                                    class="fas fa-comments"></i></span> Orale</p>
+                                        <p class="title is-5 has-text-grey">{{ subjectData?.q1.orale ?? '—' }}</p>
                                     </div>
                                     <div class="column has-text-centered">
-                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i class="fas fa-screwdriver-wrench"></i></span> Pratico</p>
-                                        <p class="title is-5">{{ subjectData?.q1.pratico ?? '—' }}</p>
+                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i
+                                                    class="fas fa-screwdriver-wrench"></i></span> Pratico</p>
+                                        <p class="title is-5 has-text-grey">{{ subjectData?.q1.pratico ?? '—' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -137,16 +155,19 @@
                                         </p>
                                     </div>
                                     <div class="column has-text-centered">
-                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i class="fas fa-pen-clip"></i></span> Scritto</p>
-                                        <p class="title is-5">{{ subjectData?.q2.scritto ?? '—' }}</p>
+                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i
+                                                    class="fas fa-pen-clip"></i></span> Scritto</p>
+                                        <p class="title is-5 has-text-grey">{{ subjectData?.q2.scritto ?? '—' }}</p>
                                     </div>
                                     <div class="column has-text-centered">
-                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i class="fas fa-comments"></i></span> Orale</p>
-                                        <p class="title is-5">{{ subjectData?.q2.orale ?? '—' }}</p>
+                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i
+                                                    class="fas fa-comments"></i></span> Orale</p>
+                                        <p class="title is-5 has-text-grey">{{ subjectData?.q2.orale ?? '—' }}</p>
                                     </div>
                                     <div class="column has-text-centered">
-                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i class="fas fa-screwdriver-wrench"></i></span> Pratico</p>
-                                        <p class="title is-5">{{ subjectData?.q2.pratico ?? '—' }}</p>
+                                        <p class="is-size-7 has-text-grey"><span class="icon is-small"><i
+                                                    class="fas fa-screwdriver-wrench"></i></span> Pratico</p>
+                                        <p class="title is-5 has-text-grey">{{ subjectData?.q2.pratico ?? '—' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -161,7 +182,7 @@
                                 <p class="heading">
                                     <span class="icon"><i class="fas fa-bullseye"></i></span>
                                     Voto necessario per l'obiettivo ({{ subject.targetAverage ??
-                                    store.settings.targetAverage }})
+                                        store.settings.targetAverage }})
                                 </p>
                                 <p class="title is-3" :class="neededColorClass">{{ neededInfo.text }}</p>
                             </div>
@@ -175,7 +196,10 @@
                                 <div class="level-item">
                                     <h2 class="title is-5">
                                         <span class="icon mr-1"><i class="fas fa-list"></i></span>
-                                        Tutti i voti
+                                        Voti
+                                        <span class="tag is-primary is-light ml-2" v-if="ui.selectedPeriod !== 'all'">
+                                            {{ ui.selectedPeriod === 'Q1' ? '1° Quadrimestre' : '2° Quadrimestre' }}
+                                        </span>
                                     </h2>
                                 </div>
                             </div>
@@ -255,87 +279,88 @@
 </style>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
-import { useGradesStore } from "@/stores/grades";
-import { useGradeCalc } from "@/composables/useGradeCalc";
-import AppNavbar from "@/components/layout/AppNavbar.vue";
-import AddGradeModal from "@/components/grades/AddGradeModal.vue";
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useGradesStore } from '@/stores/grades'
+import { useUiStore } from '@/stores/ui'
+import { useGradeCalc } from '@/composables/useGradeCalc'
+import AppNavbar from '@/components/layout/AppNavbar.vue'
+import AddGradeModal from '@/components/grades/AddGradeModal.vue'
 
-const route = useRoute();
-const store = useGradesStore();
-const showAdd = ref(false);
-const editingGrade = ref(null);
+const route = useRoute()
+const store = useGradesStore()
+const ui = useUiStore()
+const showAdd = ref(false)
+const editingGrade = ref(null)
 
-const { averagePerSubject, calcNeededGrade } = useGradeCalc(store);
+// SubjectView usa sempre 'all' per i box Q1/Q2 (mostrano sempre entrambi)
+const { averagePerSubject, calcNeededGrade } = useGradeCalc(store, null, null, 'all')
 
-const subject = computed(() => store.subjects.find((s) => s.id === route.params.id));
-const subjectData = computed(() =>
-    averagePerSubject.value.find((s) => s.id === route.params.id)
-);
-const subjectGrades = computed(() =>
-    store.grades
-        .filter((g) => g.subjectId === route.params.id)
+const subject = computed(() => store.subjects.find(s => s.id === route.params.id))
+const subjectData = computed(() => averagePerSubject.value.find(s => s.id === route.params.id))
+
+// La tabella voti in basso rispetta il filtro globale
+const subjectGrades = computed(() => {
+    const p = ui.selectedPeriod
+    return store.grades
+        .filter(g => g.subjectId === route.params.id && (p === 'all' || g.period === p))
         .sort((a, b) => new Date(b.date) - new Date(a.date))
-);
+})
 
 function countByType(type) {
-    return subjectGrades.value.filter((g) => g.type === type).length;
+    return subjectGrades.value.filter(g => g.type === type).length
 }
 
 const avgTagClass = computed(() => {
-    const avg = subjectData.value?.average;
-    if (!avg) return "is-light";
-    const target = subject.value?.targetAverage ?? store.settings.targetAverage;
-    if (avg >= target) return "is-success";
-    if (avg >= 6) return "is-warning";
-    return "is-danger";
-});
+    const avg = subjectData.value?.average
+    if (!avg) return 'is-light'
+    const target = subject.value?.targetAverage ?? store.settings.targetAverage
+    if (avg >= target) return 'is-success'
+    if (avg >= 6) return 'is-warning'
+    return 'is-danger'
+})
 
 const avgColorClass = computed(() => {
-    const avg = subjectData.value?.average;
-    if (!avg) return "";
-    const target = subject.value?.targetAverage ?? store.settings.targetAverage;
-    if (avg >= target) return "has-text-success";
-    if (avg >= 6) return "has-text-warning";
-    return "has-text-danger";
-});
+    const avg = subjectData.value?.average
+    if (!avg) return ''
+    const target = subject.value?.targetAverage ?? store.settings.targetAverage
+    if (avg >= target) return 'has-text-success'
+    if (avg >= 6) return 'has-text-warning'
+    return 'has-text-danger'
+})
 
+const neededInfo = computed(() => {
+    const r = calcNeededGrade(route.params.id)
+    if (r.alreadyReached) return { text: 'Raggiunto' }
+    if (!r.feasible) return { text: '> 10' }
+    return { text: String(r.needed) }
+})
+
+const neededColorClass = computed(() => {
+    const r = calcNeededGrade(route.params.id)
+    if (r.alreadyReached) return 'has-text-success'
+    if (!r.feasible) return 'has-text-danger'
+    return 'has-text-info'
+})
+
+async function deleteGrade(id) {
+    if (confirm('Eliminare questo voto?')) await store.deleteGrade(id)
+}
+
+function formatDate(d) { return new Date(d).toLocaleDateString('it-IT') }
+function tipoLabel(t) {
+    return { scritto: 'Scritto', orale: 'Orale', pratico: 'Pratico' }[t] || t
+}
+function gradeTagClass(v) {
+    if (v >= 7) return 'is-success'
+    if (v >= 6) return 'is-warning'
+    return 'is-danger'
+}
 function periodAvgClass(avg) {
     if (!avg) return ''
     const target = subject.value?.targetAverage ?? store.settings.targetAverage
     if (avg >= target) return 'has-text-success'
     if (avg >= 6) return 'has-text-warning'
     return 'has-text-danger'
-}
-
-const neededInfo = computed(() => {
-    const r = calcNeededGrade(route.params.id);
-    if (r.alreadyReached) return { text: "Raggiunto" };
-    if (!r.feasible) return { text: "> 10" };
-    return { text: String(r.needed) };
-});
-
-const neededColorClass = computed(() => {
-    const r = calcNeededGrade(route.params.id);
-    if (r.alreadyReached) return "has-text-success";
-    if (!r.feasible) return "has-text-danger";
-    return "has-text-info";
-});
-
-async function deleteGrade(id) {
-    if (confirm("Eliminare questo voto?")) await store.deleteGrade(id);
-}
-
-function formatDate(d) {
-    return new Date(d).toLocaleDateString("it-IT");
-}
-function tipoLabel(t) {
-    return { scritto: "Scritto", orale: "Orale", pratico: "Pratico" }[t] || t;
-}
-function gradeTagClass(v) {
-    if (v >= 7) return "is-success";
-    if (v >= 6) return "is-warning";
-    return "is-danger";
 }
 </script>

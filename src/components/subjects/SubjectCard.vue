@@ -46,40 +46,42 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useGradeCalc } from "@/composables/useGradeCalc";
-import { useGradesStore } from "@/stores/grades";
+import { computed } from 'vue'
+import { useGradeCalc } from '@/composables/useGradeCalc'
+import { useGradesStore } from '@/stores/grades'
+import { useUiStore } from '@/stores/ui'
 
 const props = defineProps({
     subject: Object,
-    target: Number,
-});
+    target: Number
+})
 
-const store = useGradesStore();
-const { calcNeededGrade } = useGradeCalc(store);
+const store = useGradesStore()
+const ui = useUiStore()
+const { calcNeededGrade } = useGradeCalc(store, null, null, computed(() => ui.selectedPeriod))
 
 const avgTagClass = computed(() => {
-    if (!props.subject.average) return "is-light";
-    const target = props.subject.targetAverage ?? props.target;
-    if (props.subject.average >= target) return "is-success";
-    if (props.subject.average >= 6) return "is-warning";
-    return "is-danger";
-});
+    if (!props.subject.average) return 'is-light'
+    const target = props.subject.targetAverage ?? props.target
+    if (props.subject.average >= target) return 'is-success'
+    if (props.subject.average >= 6) return 'is-warning'
+    return 'is-danger'
+})
 
 const progressClass = computed(() => {
-    if (!props.subject.average) return "is-light";
-    const target = props.subject.targetAverage ?? props.target;
-    if (props.subject.average >= target) return "is-success";
-    if (props.subject.average >= 6) return "is-warning";
-    return "is-danger";
-});
+    if (!props.subject.average) return 'is-light'
+    const target = props.subject.targetAverage ?? props.target
+    if (props.subject.average >= target) return 'is-success'
+    if (props.subject.average >= 6) return 'is-warning'
+    return 'is-danger'
+})
 
 const neededText = computed(() => {
-    const result = calcNeededGrade(props.subject.id);
-    if (result.alreadyReached) return "Obiettivo raggiunto";
-    if (!result.feasible) return "Obiettivo difficile";
-    return `Serve almeno ${result.needed} per l'obiettivo`;
-});
+    const result = calcNeededGrade(props.subject.id)
+    if (result.alreadyReached) return 'Obiettivo raggiunto'
+    if (!result.feasible) return 'Obiettivo difficile'
+    return `Serve almeno ${result.needed} per l'obiettivo`
+})
 </script>
 
 <style scoped>

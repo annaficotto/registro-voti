@@ -1,14 +1,20 @@
 import { computed, toRef, isRef } from 'vue'
 
-export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
-    // Supporta sia (store.subjects, store.grades, store.settings)
-    // che (store) direttamente
+export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull, periodRef) {
     const subjects = isRef(subjectsOrStore) ? subjectsOrStore : toRef(subjectsOrStore, 'subjects')
     const grades = isRef(gradesOrNull) ? gradesOrNull : toRef(subjectsOrStore, 'grades')
     const settings = isRef(settingsOrNull) ? settingsOrNull : toRef(subjectsOrStore, 'settings')
 
+    // Filtra i voti per periodo se specificato
+    function filterByPeriod(gradeList) {
+        const p = isRef(periodRef) ? periodRef.value : periodRef
+        if (!p || p === 'all') return gradeList
+        return gradeList.filter(g => g.period === p)
+    }
+
     function getGradesForSubject(subjectId) {
-        return (grades.value || []).filter(g => g.subjectId === subjectId)
+        const all = (grades.value || []).filter(g => g.subjectId === subjectId)
+        return filterByPeriod(all)
     }
 
     function calcAverage(values) {
@@ -22,8 +28,10 @@ export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
             const subGrades = getGradesForSubject(sub.id)
             const allValues = subGrades.map(g => g.value)
 
-            const q1Grades = subGrades.filter(g => g.period === 'Q1')
-            const q2Grades = subGrades.filter(g => g.period === 'Q2')
+            // Sempre tutti i voti per i dettagli Q1/Q2 nella SubjectView
+            const allSubGrades = (grades.value || []).filter(g => g.subjectId === sub.id)
+            const q1Grades = allSubGrades.filter(g => g.period === 'Q1')
+            const q2Grades = allSubGrades.filter(g => g.period === 'Q2')
 
             const orali = subGrades.filter(g => g.type === 'orale').map(g => g.value)
             const scritti = subGrades.filter(g => g.type === 'scritto').map(g => g.value)
@@ -32,7 +40,6 @@ export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
             const q1Orali = q1Grades.filter(g => g.type === 'orale').map(g => g.value)
             const q1Scritti = q1Grades.filter(g => g.type === 'scritto').map(g => g.value)
             const q1Pratici = q1Grades.filter(g => g.type === 'pratico').map(g => g.value)
-
             const q2Orali = q2Grades.filter(g => g.type === 'orale').map(g => g.value)
             const q2Scritti = q2Grades.filter(g => g.type === 'scritto').map(g => g.value)
             const q2Pratici = q2Grades.filter(g => g.type === 'pratico').map(g => g.value)
@@ -45,7 +52,6 @@ export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
                 averageOrale: calcAverage(orali),
                 averageScritto: calcAverage(scritti),
                 averagePratico: calcAverage(pratici),
-
                 q1: {
                     average: calcAverage(q1Grades.map(g => g.value)),
                     orale: calcAverage(q1Orali),
@@ -60,7 +66,6 @@ export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
                     pratico: calcAverage(q2Pratici),
                     count: q2Grades.length
                 },
-
                 count: subGrades.length,
                 grades: subGrades,
                 sufficient: calcAverage(allValues) >= 6,
@@ -92,7 +97,8 @@ export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
     }
 
     const stats = computed(() => {
-        const allValues = (grades.value || []).map(g => g.value)
+        const allGrades = filterByPeriod(grades.value || [])
+        const allValues = allGrades.map(g => g.value)
         if (!allValues.length) return null
         const sufficient = allValues.filter(v => v >= 6).length
         const insufficient = allValues.filter(v => v < 6).length
@@ -112,7 +118,7 @@ export function useGradeCalc(subjectsOrStore, gradesOrNull, settingsOrNull) {
     })
 
     const averageTrend = computed(() => {
-        const sorted = [...(grades.value || [])].sort((a, b) => new Date(a.date) - new Date(b.date))
+        const sorted = [...filterByPeriod(grades.value || [])].sort((a, b) => new Date(a.date) - new Date(b.date))
         return sorted.map((grade, idx) => {
             const values = sorted.slice(0, idx + 1).map(g => g.value)
             return {

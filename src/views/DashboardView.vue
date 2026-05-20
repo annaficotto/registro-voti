@@ -32,7 +32,12 @@
                 <div class="notification mb-5" :class="avgNotifClass">
                     <div class="columns is-vcentered">
                         <div class="column">
-                            <p class="is-size-7 has-text-weight-semibold mb-1">MEDIA GENERALE</p>
+                            <p class="is-size-7 has-text-weight-semibold mb-1">
+                                MEDIA GENERALE
+                                <span class="tag is-light is-small ml-1" v-if="ui.selectedPeriod !== 'all'">
+                                    {{ ui.selectedPeriod === 'Q1' ? '1° Quadrimestre' : '2° Quadrimestre' }}
+                                </span>
+                            </p>
                             <p class="is-size-1 has-text-weight-bold">{{ globalAverage ?? "-" }}</p>
                         </div>
                         <div class="column is-narrow has-text-right">
@@ -84,29 +89,30 @@
 </style>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useGradesStore } from "@/stores/grades";
-import { useGradeCalc } from "@/composables/useGradeCalc";
-import AppNavbar from "@/components/layout/AppNavbar.vue";
-import SubjectCard from "@/components/subjects/SubjectCard.vue";
-import AddGradeModal from "@/components/grades/AddGradeModal.vue";
+import { ref, computed, onMounted } from 'vue'
+import { useGradesStore } from '@/stores/grades'
+import { useUiStore } from '@/stores/ui'
+import { useGradeCalc } from '@/composables/useGradeCalc'
+import AppNavbar from '@/components/layout/AppNavbar.vue'
+import SubjectCard from '@/components/subjects/SubjectCard.vue'
+import AddGradeModal from '@/components/grades/AddGradeModal.vue'
 
-const store = useGradesStore();
-const showAddGrade = ref(false);
+const store = useGradesStore()
+const ui = useUiStore()
+const showAddGrade = ref(false)
 
-const { averagePerSubject, globalAverage } = useGradeCalc(store);
+const { averagePerSubject, globalAverage } = useGradeCalc(store, null, null, computed(() => ui.selectedPeriod))
 
-// Materie in ordine alfabetico con i dati calcolati
 const sortedSubjects = computed(() =>
     [...averagePerSubject.value].sort((a, b) => a.name.localeCompare(b.name))
-);
+)
 
 const avgNotifClass = computed(() => {
-    if (!globalAverage.value) return "is-light";
-    if (globalAverage.value >= store.settings.targetAverage) return "is-success";
-    if (globalAverage.value >= 6) return "is-warning";
-    return "is-danger";
-});
+    if (!globalAverage.value) return 'is-light'
+    if (globalAverage.value >= store.settings.targetAverage) return 'is-success'
+    if (globalAverage.value >= 6) return 'is-warning'
+    return 'is-danger'
+})
 
-onMounted(() => store.loadData());
+onMounted(() => store.loadData())
 </script>
