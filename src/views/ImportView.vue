@@ -4,10 +4,10 @@
         <section class="section">
             <div class="container is-narrow">
 
-                <h1 class="title">
+                <h2 class="title">
                     <span class="icon mr-2"><i class="fas fa-wand-magic-sparkles"></i></span>
                     Importa voti da immagine
-                </h1>
+                </h2>
                 <p class="subtitle is-6 has-text-grey mb-5">
                     Carica uno screenshot del tuo registro o pagella — l'AI riconoscerà i voti automaticamente
                 </p>
@@ -143,7 +143,6 @@
                         </tbody>
                     </table>
 
-                    <!-- Warning materie non assegnate -->
                     <div class="notification is-warning is-light mt-3" v-if="error">
                         <span class="icon"><i class="fas fa-triangle-exclamation"></i></span>
                         {{ error }}
@@ -267,37 +266,21 @@ async function analyzeImage() {
             mimeType: imageMimeType.value
         })
 
-        const today = new Date().toISOString().split('T')[0]
-
-        // Auto-calcola il periodo dalla data
-        function getPeriod(dateStr) {
-            if (!dateStr) return 'Q1'
-            const month = new Date(dateStr).getMonth() + 1
-            return (month >= 9 && month <= 12) ? 'Q1' : 'Q2'
-        }
-
+        // Il backend restituisce già data in YYYY-MM-DD e periodo calcolato
         recognizedGrades.value = (res.data.grades || []).map(g => ({
             subjectId: g.subjectId || '',
             subjectNameFound: g.subjectNameFound || '',
             value: g.value,
             type: g.type || 'scritto',
-            date: g.date || today,
-            period: getPeriod(g.date || today),
+            date: g.date,
+            period: g.period,
             note: g.note || ''
         }))
 
         step.value = 2
     } catch (e) {
         if (e.response?.status === 429) {
-            error.value = '⏳ Il modello AI è sovraccarico in questo momento.'
-            retryCountdown.value = 30
-            const interval = setInterval(() => {
-                retryCountdown.value--
-                if (retryCountdown.value <= 0) {
-                    clearInterval(interval)
-                    analyzeImage()
-                }
-            }, 1000)
+            error.value = '⏳ Limite giornaliero AI raggiunto. Riprova domani.'
         } else {
             error.value = e.response?.data?.error || 'Errore durante l\'analisi. Riprova.'
         }

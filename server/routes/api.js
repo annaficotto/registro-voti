@@ -113,9 +113,49 @@ router.post('/ai/import', async (req, res) => {
     }
 
     const data = getData()
+    const schoolYear = data.settings.schoolYear || '2025/2026'
+    const [startYear, endYear] = schoolYear.split('-').map(Number)
+    // startYear = 2025, endYear = 2026
+
     const subjectList = data.subjects.map(s => `- id: "${s.id}", nome: "${s.name}"`).join('\n')
 
-    const prompt = `Sei un assistente che estrae voti scolastici da immagini.
+    // Mappa alias per materie (chiave: stringa da cercare, valore: nome canonico nel registro)
+    const subjectAliasMap = {
+        'tecnologie e progettazione di sistemi informatici e di': 'TPSIT',
+        'telecomunicazioni': 'Telecomunicazioni'
+    }
+
+    function normalizeSubjectName(name) {
+        if (!name) return ''
+        const lower = name.toLowerCase().trim()
+        for (const [alias, canonical] of Object.entries(subjectAliasMap)) {
+            if (lower.includes(alias.toLowerCase())) return canonical
+        }
+        return name
+    }
+
+    function convertDate(dateStr) {
+        if (!dateStr) return null
+        // Se è già YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr
+        // Se è DD/MM
+        const match = dateStr.match(/^(\d{2})\/(\d{2})$/)
+        if (match) {
+            const day = match[1]
+            const month = match[2]
+            const year = (parseInt(month, 10) >= 9) ? startYear : endYear
+            return `${year}-${month}-${day}`
+        }
+        return null
+    }
+
+    function getPeriodFromDate(dateStr) {
+        if (!dateStr) return 'Q1'
+        const month = new Date(dateStr).getMonth() + 1
+        return (month >= 9 && month <= 12) ? 'Q1' : 'Q2'
+    }
+
+    const prompt = `Sei un assistente che estrae voti scolastici da immagini di registri elettronici italiani.
 
 Analizza l'immagine e restituisci SOLO un JSON valido (nessun testo prima o dopo) con questa struttura:
 {
@@ -123,9 +163,9 @@ Analizza l'immagine e restituisci SOLO un JSON valido (nessun testo prima o dopo
     {
       "subjectId": "id della materia corrispondente dalla lista sotto, o null se non trovata",
       "subjectNameFound": "nome della materia come appare nell'immagine",
-      "value": numero tra 1 e 10 (usa decimali come 7.5 se necessario),
+      "value": numero decimale tra 1 e 10,
       "type": "scritto" | "orale" | "pratico",
-      "date": "YYYY-MM-DD o null se non trovata",
+      "date": "DD/MM (es. 15/10) se visibile, altrimenti null",
       "note": "eventuale descrizione della verifica o null"
     }
   ]
@@ -134,13 +174,43 @@ Analizza l'immagine e restituisci SOLO un JSON valido (nessun testo prima o dopo
 Materie disponibili nel registro:
 ${subjectList || '(nessuna materia ancora inserita)'}
 
-Regole:
-- Estrai tutti i voti visibili nell'immagine
-- I voti possono essere scritti come numeri (7, 8.5), frazioni (15/20 → converti in decimi), lettere (A=9, B=8, C=7, D=6, E=5) o descrizioni
-- Se una materia nell'immagine corrisponde a una della lista, usa il suo id
-- Se non corrisponde a nessuna, metti subjectId: null
-- Se il tipo (scritto/orale/pratico) non è specificato, usa "scritto"
-- Restituisci SOLO il JSON, nessun altro testo`
+=== TIPOLOGIA SELEZIONATA ===
+Nell'interfaccia è attivo un filtro per tipologia (es. "Scritto/Grafico", "Orale", "Pratico", "Tutto").
+Guarda quale pulsante è evidenziato/selezionato (solitamente con sfondo colorato rispetto agli altri).
+- Se il filtro attivo è "Scritto/Grafico" → assegna type: "scritto" a tutti i voti estratti
+- Se il filtro attivo è "Orale" → assegna type: "orale" a tutti i voti estratti
+- Se il filtro attivo è "Pratico" → assegna type: "pratico" a tutti i voti estratti
+- Se il filtro attivo è "Tutto" → determina il tipo voto per voto se deducibile, altrimenti usa "scritto"
+
+=== CONVERSIONE DEI VOTI (sistema italiano) ===
+Converti sempre il voto in un numero decimale seguendo queste regole precise:
+
+  Notazione      | Valore  | Spiegazione
+  ---------------|---------|-------------------------
+  7              | 7.0     | voto intero
+  7+             | 7.25    | più un quarto
+  7½             | 7.5     | più mezzo
+  7/8            | 7.75    | tra 7 e 8 (tre quarti)
+  8-             | 7.85    | meno (quasi l'intero superiore)
+  9/10           | 9.75    | tra 9 e 10
+
+Applica lo stesso schema per qualsiasi voto (es. 6/7=6.75, 5+=5.25, 9½=9.5, ecc.)
+
+=== DATE ===
+Ogni voto ha la propria data scritta SOPRA il riquadro, in formato GG/MM (es. "24/04").
+Leggi attentamente la data associata a ciascun voto individualmente: quando una materia ha più voti
+affiancati, ogni data è posizionata sopra il voto corrispondente. Non confondere le date tra voti diversi.
+Restituisci la data nel formato "DD/MM".
+
+=== MATERIE SPECIALI ===
+- "tecnologie e progettazione di sistemi informatici e di" (anche se troncata) → cerca corrispondenza con "TPSIT" nella lista materie
+- "telecomunicazioni" → cerca corrispondenza con "Telecomunicazioni" nella lista materie
+- In generale, abbina nomi lunghi o troncati alla materia più plausibile nella lista
+
+=== REGOLE GENERALI ===
+- Estrai TUTTI i voti visibili
+- Se una materia non è nella lista, usa subjectId: null
+- Restituisci SOLO il JSON, nessun altro testo, nessun markdown`
 
     try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -201,7 +271,37 @@ Regole:
             return res.status(500).json({ error: 'Risposta AI non è JSON valido', raw: content })
         }
 
-        res.json({ grades: parsed.grades || [] })
+        // Arricchisci i voti con data convertita, periodo e associazione materia
+        const enrichedGrades = (parsed.grades || []).map(grade => {
+            // 1. Data
+            let finalDate = convertDate(grade.date)
+            if (!finalDate) {
+                finalDate = new Date().toISOString().split('T')[0] // fallback a oggi
+            }
+
+            // 2. Periodo
+            const period = getPeriodFromDate(finalDate)
+
+            // 3. Materia: se subjectId è null, proviamo a matchare per nome (con alias)
+            let subjectId = grade.subjectId
+            if (!subjectId && grade.subjectNameFound) {
+                const normalized = normalizeSubjectName(grade.subjectNameFound)
+                const foundSubject = data.subjects.find(s =>
+                    s.name.toLowerCase() === normalized.toLowerCase()
+                )
+                if (foundSubject) subjectId = foundSubject.id
+            }
+
+            return {
+                ...grade,
+                subjectId: subjectId || null,
+                date: finalDate,
+                period,
+                value: parseFloat(grade.value) || null
+            }
+        })
+
+        res.json({ grades: enrichedGrades })
 
     } catch (err) {
         console.error('Errore chiamata AI:', err)
