@@ -7,9 +7,14 @@
                 <h2 class="title">
                     <span class="icon mr-2"><i class="fas fa-arrow-trend-up"></i></span>
                     Proiezione pagella
+                    <span class="tag is-primary is-light ml-2" v-if="ui.selectedPeriod !== 'all'">
+                        {{ periodLabel }}
+                    </span>
                 </h2>
-                <p class="subtitle is-6 has-text-grey mb-5 mt-4">
-                    Ipotizza i voti finali e calcola la tua media pagella e i crediti
+                <p class="subtitle is-6 has-text-grey mb-5">
+                    {{ ui.selectedPeriod === 'all'
+                        ? 'Ipotizza i voti finali e calcola la tua media pagella e i crediti'
+                        : `Proiezione basata solo sui voti del ${periodLabel}` }}
                 </p>
 
                 <!-- Tabella proiezioni -->
@@ -189,33 +194,44 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useGradesStore } from '@/stores/grades'
+import { useUiStore } from '@/stores/ui'
 import { useGradeCalc } from '@/composables/useGradeCalc'
 import AppNavbar from '@/components/layout/AppNavbar.vue'
 
 const store = useGradesStore()
-const { averagePerSubject, calcNeededGrade } = useGradeCalc(store, null, null, 'all');
+const ui = useUiStore()
 
-// Voti ipotetici: { subjectId: value }
+const { averagePerSubject, calcNeededGrade } = useGradeCalc(
+    store, null, null, computed(() => ui.selectedPeriod)
+)
+
 const projections = ref({})
-
-// Voto di comportamento
 const comportamento = ref(null)
 
-// Materie ordinate alfabeticamente con dati calcolati
+// Reset proiezioni quando cambia il periodo
+watch(() => ui.selectedPeriod, () => {
+    projections.value = {}
+    comportamento.value = null
+})
+
+const periodLabel = computed(() => {
+    if (ui.selectedPeriod === 'Q1') return '1° Quadrimestre'
+    if (ui.selectedPeriod === 'Q2') return '2° Quadrimestre'
+    return 'Anno intero'
+})
+
 const sortedSubjects = computed(() =>
     [...averagePerSubject.value].sort((a, b) => a.name.localeCompare(b.name))
 )
 
-// Voto effettivo: ipotetico se inserito, altrimenti media attuale
 function effectiveGrade(sub) {
     const p = projections.value[sub.id]
     if (p !== undefined && p !== null && p !== '') return p
     return sub.average
 }
 
-// Media pagella: media dei voti effettivi di tutte le materie
 const mediaPagella = computed(() => {
     const values = sortedSubjects.value
         .map(s => effectiveGrade(s))
@@ -226,16 +242,11 @@ const mediaPagella = computed(() => {
     return Math.round((sum / values.length) * 100) / 100
 })
 
-// Crediti secondo la tabella ufficiale
 const crediti = computed(() => {
     const m = mediaPagella.value
     const year = store.settings.year ?? 4
     if (!m) return null
-    if (year < 3) return null // 1° e 2° anno: nessun credito
-
-    // Tabella crediti per anno
-    // M<6: solo 5° anno ha crediti (7-8)
-    // Le fasce restituiscono la fascia minima (il massimo dipende da altri fattori)
+    if (year < 3) return null
     const table = {
         3: [
             { min: 6, max: 6, credito: '7-8' },
@@ -260,13 +271,8 @@ const crediti = computed(() => {
             { min: 9, max: 10, credito: '14-15' },
         ]
     }
-
     const fasce = table[year] || table[4]
-
-    if (m < 6) {
-        if (year === 5) return '7-8'
-        return null
-    }
+    if (m < 6) return year === 5 ? '7-8' : null
     if (m === 6) return fasce.find(f => f.min === 6 && f.max === 6)?.credito ?? null
     for (const fascia of [...fasce].reverse()) {
         if (m > fascia.min && m <= fascia.max) return fascia.credito
@@ -274,7 +280,8 @@ const crediti = computed(() => {
     return null
 })
 
-// Materie insufficienti nella proiezione
+const annoLabel = computed(() => `${store.settings.year ?? 4}° anno`)
+
 const insufficienti = computed(() =>
     sortedSubjects.value.filter(s => {
         const g = effectiveGrade(s)
@@ -282,12 +289,14 @@ const insufficienti = computed(() =>
     })
 )
 
-// Voti necessari per raggiungere il voto ipotetico
 function neededText(sub) {
     const target = projections.value[sub.id]
     if (!target) return '—'
     const currentGrades = store.grades
-        .filter(g => g.subjectId === sub.id)
+        .filter(g => {
+            const periodOk = ui.selectedPeriod === 'all' || g.period === ui.selectedPeriod
+            return g.subjectId === sub.id && periodOk
+        })
         .map(g => g.value)
     const n = currentGrades.length
     if (!n) return `Serve almeno ${target}`
@@ -303,15 +312,16 @@ function neededClass(sub) {
     const target = projections.value[sub.id]
     if (!target) return ''
     const currentGrades = store.grades
-        .filter(g => g.subjectId === sub.id)
+        .filter(g => {
+            const periodOk = ui.selectedPeriod === 'all' || g.period === ui.selectedPeriod
+            return g.subjectId === sub.id && periodOk
+        })
         .map(g => g.value)
     const n = currentGrades.length
     if (!n) return 'has-text-info'
     const sum = currentGrades.reduce((a, b) => a + b, 0)
-    const currentAvg = sum / n
-    if (currentAvg >= target) return 'has-text-success'
-    const needed = (target * (n + 1) - sum)
-    if (needed > 10) return 'has-text-danger'
+    if (sum / n >= target) return 'has-text-success'
+    if ((target * (n + 1) - sum) > 10) return 'has-text-danger'
     return 'has-text-info'
 }
 
@@ -329,11 +339,6 @@ const mediaPagellaClass = computed(() => {
     if (m >= 8) return 'has-text-success'
     if (m >= 6) return 'has-text-warning'
     return 'has-text-danger'
-})
-
-const annoLabel = computed(() => {
-    const y = store.settings.year ?? 4
-    return `${y}° anno`
 })
 
 function resetProjections() {

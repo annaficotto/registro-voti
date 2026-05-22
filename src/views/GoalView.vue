@@ -4,8 +4,11 @@
         <section class="section">
             <div class="container">
                 <h2 class="title">
-                    <span class="icon mr-1"><i class="fas fa-bullseye"></i></span> Calcolatore
-                    obiettivo
+                    <span class="icon mr-2"><i class="fas fa-bullseye"></i></span>
+                    Obiettivo
+                    <span class="tag is-primary is-light ml-2" v-if="ui.selectedPeriod !== 'all'">
+                        {{ ui.selectedPeriod === 'Q1' ? '1° Quadrimestre' : '2° Quadrimestre' }}
+                    </span>
                 </h2>
                 <p class="subtitle">
                     Scopri quanti voti ti servono per raggiungere la tua media obiettivo
