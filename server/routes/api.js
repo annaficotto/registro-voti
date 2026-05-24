@@ -74,9 +74,38 @@ router.delete('/subjects/:id', (req, res) => {
 // Voti
 router.post('/grades', (req, res) => {
     const data = getData()
+
+    const schoolYear = data.settings.schoolYear || '2025-2026'
+    const [startYear, endYear] = schoolYear.split('-').map(Number)
+
+    function convertDate(dateStr) {
+        if (!dateStr) return new Date().toISOString().split('T')[0]
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr
+        const match = dateStr.match(/^(\d{2})\/(\d{2})$/)
+        if (match) {
+            const day = match[1]
+            const month = match[2]
+            const year = (parseInt(month, 10) >= 9) ? startYear : endYear
+            return `${year}-${month}-${day}`
+        }
+        return new Date().toISOString().split('T')[0]
+    }
+
+    function getPeriodFromDate(dateStr) {
+        if (!dateStr) return 'Q1'
+        const month = new Date(dateStr).getMonth() + 1
+        return (month >= 9 && month <= 12) ? 'Q1' : 'Q2'
+    }
+
+    const finalDate = convertDate(req.body.date)
+    const period = req.body.period || getPeriodFromDate(finalDate)
+    console.log('[POST /grades] date in:', req.body.date, '| finalDate:', finalDate, '| period in:', req.body.period, '| period calc:', period)
+
     const grade = {
         id: `g_${makeId()}`,
         ...req.body,
+        date: finalDate,
+        period,
         createdAt: new Date().toISOString()
     }
     data.grades.push(grade)
@@ -86,9 +115,39 @@ router.post('/grades', (req, res) => {
 
 router.put('/grades/:id', (req, res) => {
     const data = getData()
+
+    const schoolYear = data.settings.schoolYear || '2025-2026'
+    const [startYear, endYear] = schoolYear.split('-').map(Number)
+
+    function convertDate(dateStr) {
+        if (!dateStr) return new Date().toISOString().split('T')[0]
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr
+        const match = dateStr.match(/^(\d{2})\/(\d{2})$/)
+        if (match) {
+            const day = match[1]
+            const month = match[2]
+            const year = (parseInt(month, 10) >= 9) ? startYear : endYear
+            return `${year}-${month}-${day}`
+        }
+        return new Date().toISOString().split('T')[0]
+    }
+
+    function getPeriodFromDate(dateStr) {
+        if (!dateStr) return 'Q1'
+        const month = new Date(dateStr).getMonth() + 1
+        return (month >= 9 && month <= 12) ? 'Q1' : 'Q2'
+    }
+
     const idx = data.grades.findIndex(g => g.id === req.params.id)
     if (idx === -1) return res.status(404).json({ error: 'Voto non trovato' })
-    data.grades[idx] = { ...data.grades[idx], ...req.body }
+
+    const updatedBody = { ...req.body }
+    if (updatedBody.date) {
+        updatedBody.date = convertDate(updatedBody.date)
+        updatedBody.period = updatedBody.period || getPeriodFromDate(updatedBody.date)
+    }
+
+    data.grades[idx] = { ...data.grades[idx], ...updatedBody }
     saveData(data)
     res.json(data.grades[idx])
 })

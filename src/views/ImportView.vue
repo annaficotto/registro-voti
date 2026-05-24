@@ -53,6 +53,92 @@
                         <span class="icon"><i class="fas fa-triangle-exclamation"></i></span>
                         {{ error }}
                     </div>
+
+                    <!-- Inserimento manuale in caso di errore AI -->
+                    <div v-if="showManualInput" class="mt-4">
+                        <div class="is-flex is-align-items-center is-justify-content-space-between mb-3">
+                            <p class="has-text-grey is-size-7">
+                                <span class="icon"><i class="fas fa-pen"></i></span>
+                                Inserisci i voti manualmente
+                            </p>
+                            <button class="button is-small is-light" @click="addManualRow">
+                                <span class="icon"><i class="fas fa-plus"></i></span>
+                                <span>Aggiungi riga</span>
+                            </button>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table is-fullwidth is-size-7">
+                                <thead>
+                                    <tr>
+                                        <th>Materia</th>
+                                        <th>Voto</th>
+                                        <th>Tipo</th>
+                                        <th>Data</th>
+                                        <th>Note</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(grade, idx) in recognizedGrades" :key="idx"
+                                        :class="{ 'has-background-warning-light': !grade.subjectId }">
+                                        <td>
+                                            <div class="select is-small is-fullwidth">
+                                                <select v-model="grade.subjectId">
+                                                    <option value="" disabled>Seleziona...</option>
+                                                    <option v-for="sub in sortedSubjects" :key="sub.id" :value="sub.id">
+                                                        {{ sub.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input class="input is-small has-text-centered" style="width: 70px"
+                                                type="number" min="1" max="10" step="0.25"
+                                                v-model.number="grade.value" />
+                                        </td>
+                                        <td>
+                                            <div class="select is-small">
+                                                <select v-model="grade.type">
+                                                    <option value="scritto">Scritto</option>
+                                                    <option value="orale">Orale</option>
+                                                    <option value="pratico">Pratico</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input class="input is-small" style="width: 140px" type="date"
+                                                v-model="grade.date" />
+                                        </td>
+                                        <td>
+                                            <input class="input is-small" style="min-width: 120px" type="text"
+                                                v-model="grade.note" placeholder="opzionale" />
+                                        </td>
+                                        <td>
+                                            <button class="button is-small is-danger is-light"
+                                                @click="recognizedGrades.splice(idx, 1)">
+                                                <span class="icon"><i class="fas fa-xmark"></i></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="!recognizedGrades.length">
+                                        <td colspan="6" class="has-text-centered has-text-grey py-3">
+                                            Nessun voto — clicca "Aggiungi riga" per iniziare
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="is-flex is-justify-content-flex-end mt-3">
+                            <button class="button is-success" :disabled="!canImport || importing" @click="importGrades">
+                                <span class="icon" v-if="!importing"><i class="fas fa-check"></i></span>
+                                <span class="icon" v-else><i class="fas fa-spinner fa-spin"></i></span>
+                                <span>{{ importing ? 'Importazione...' : `Importa ${recognizedGrades.length} voti`
+                                    }}</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Step 2: revisione voti riconosciuti -->
@@ -146,11 +232,7 @@
                     <div class="notification is-warning is-light mt-3" v-if="error">
                         <span class="icon"><i class="fas fa-triangle-exclamation"></i></span>
                         {{ error }}
-                        <span v-if="retryCountdown > 0">
-                            — riprovo automaticamente tra <strong>{{ retryCountdown }}s</strong>
-                        </span>
-                        <button v-if="retryCountdown === 0 && !loading" class="button is-small is-warning ml-3"
-                            @click="analyzeImage">
+                        <button class="button is-small is-warning ml-3" @click="analyzeImage">
                             <span class="icon"><i class="fas fa-rotate-right"></i></span>
                             <span>Riprova ora</span>
                         </button>
@@ -214,7 +296,7 @@ const imageMimeType = ref('image/jpeg')
 const isDragging = ref(false)
 const recognizedGrades = ref([])
 const importedCount = ref(0)
-const retryCountdown = ref(0)
+const showManualInput = ref(false)
 
 const sortedSubjects = computed(() =>
     [...store.subjects].sort((a, b) => a.name.localeCompare(b.name))
@@ -260,13 +342,13 @@ function resetImage() {
 async function analyzeImage() {
     error.value = ''
     loading.value = true
+    showManualInput.value = false
     try {
         const res = await axios.post('http://localhost:3001/api/ai/import', {
             imageBase64: imageBase64.value,
             mimeType: imageMimeType.value
         })
 
-        // Il backend restituisce già data in YYYY-MM-DD e periodo calcolato
         recognizedGrades.value = (res.data.grades || []).map(g => ({
             subjectId: g.subjectId || '',
             subjectNameFound: g.subjectNameFound || '',
@@ -280,10 +362,18 @@ async function analyzeImage() {
         step.value = 2
     } catch (e) {
         if (e.response?.status === 429) {
-            error.value = '⏳ Limite giornaliero AI raggiunto. Riprova domani.'
+            const raw = e.response?.data?.error?.metadata?.raw || ''
+            const isTemporary = raw.includes('temporarily rate-limited') || raw.includes('retry shortly')
+
+            if (isTemporary) {
+                error.value = '⏳ Modello sovraccarico, riprova tra qualche secondo.'
+            } else {
+                error.value = '❌ Limite giornaliero AI raggiunto. Riprova domani.'
+            }
         } else {
             error.value = e.response?.data?.error || 'Errore durante l\'analisi. Riprova.'
         }
+        showManualInput.value = true  // mostra inserimento manuale in caso di qualsiasi errore
     } finally {
         loading.value = false
     }
@@ -309,6 +399,19 @@ async function importGrades() {
     } finally {
         importing.value = false
     }
+}
+
+
+function addManualRow() {
+    recognizedGrades.value.push({
+        subjectId: '',
+        subjectNameFound: '',
+        value: null,
+        type: 'scritto',
+        date: null,
+        period: null,
+        note: ''
+    })
 }
 
 function backToStep1() {
