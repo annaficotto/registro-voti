@@ -135,7 +135,7 @@
                                 <span class="icon" v-if="!importing"><i class="fas fa-check"></i></span>
                                 <span class="icon" v-else><i class="fas fa-spinner fa-spin"></i></span>
                                 <span>{{ importing ? 'Importazione...' : `Importa ${recognizedGrades.length} voti`
-                                    }}</span>
+                                }}</span>
                             </button>
                         </div>
                     </div>
@@ -344,10 +344,10 @@ async function analyzeImage() {
     loading.value = true
     showManualInput.value = false
     try {
-        const res = await axios.post('http://localhost:3001/api/ai/import', {
-            imageBase64: imageBase64.value,
-            mimeType: imageMimeType.value
-        })
+        const res = await axios.post(
+            (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api/ai/import',
+            { imageBase64: imageBase64.value, mimeType: imageMimeType.value }
+        )
 
         recognizedGrades.value = (res.data.grades || []).map(g => ({
             subjectId: g.subjectId || '',
